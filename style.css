@@ -5,40 +5,107 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  margin: 0; /* Add this to remove default body margin */
+  overflow: hidden; /* Prevent scrollbars due to 3D transforms */
 }
 
 .flipbook-container {
   display: flex;
   align-items: center;
+  perspective: 1200px; /* Stronger perspective */
+  transform-style: preserve-3d;
 }
 
 #flipbook {
   width: 600px;
-  height: 400px;
-  perspective: 1000px;
+  height: 400px; /* Fixed height for the flipbook */
   position: relative;
-  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* Add some shadow for depth */
 }
 
 .page {
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: 100%; /* Page takes 100% of #flipbook height */
   background-color: white;
   border: 1px solid #ccc;
   padding: 20px;
   box-sizing: border-box;
-  backface-visibility: hidden;
-  transition: transform 0.8s;
+  backface-visibility: hidden; /* Hide the back of the element when flipped */
+  transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out; /* Smooth transition for transform and opacity */
+  transform-origin: left center; /* Rotate from the left edge (spine) */
+  transform: rotateY(0deg); /* Initial state */
+  opacity: 1; /* Initial opacity */
+  display: flex; /* Use flexbox for internal layout */
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center items horizontally */
+  justify-content: flex-start; /* Start content from the top */
+  text-align: center; /* Center text */
+  overflow-y: auto; /* Allow vertical scrolling if content overflows */
 }
 
 .page.hidden {
-  display: none;
+  opacity: 0; /* Fade out hidden pages */
+  pointer-events: none; /* Prevent interaction with hidden pages */
+  display: none; /* Keep hidden for accessibility/layout after transition */
+}
+
+/* Class for the page currently flipping out (going to the left) */
+.page.flipping-out {
+  transform: rotateY(-180deg); /* Rotate around Y axis */
+  opacity: 0;
+  z-index: 2; /* Keep it above other pages during flip */
+}
+
+/* Class for the page flipping in (coming from the left) */
+.page.flipping-in {
+  transform: rotateY(0deg); /* Rotate back to normal */
+  opacity: 1;
+  z-index: 2; /* Keep it above other pages during flip */
+}
+
+/* Styling for content within pages */
+.page h2 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.page p {
+    color: #555;
+    font-size: 1em;
+    line-height: 1.4;
+    margin-bottom: 15px;
+}
+
+.page img {
+    max-width: 90%; /* Ensure images fit within the page */
+    max-height: 60%; /* Adjust max-height for images relative to page height */
+    height: auto; /* Maintain aspect ratio */
+    border: 1px solid #eee;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+    margin-bottom: 10px; /* Add margin to separate from text */
+    object-fit: contain; /* Ensure image content fits within its box without cropping */
 }
 
 button {
-  padding: 10px;
-  font-size: 18px;
-  margin: 0 10px;
+  padding: 12px 20px; /* Larger padding for buttons */
+  font-size: 20px; /* Larger font for buttons */
+  margin: 0 15px; /* More space around buttons */
   cursor: pointer;
+  background-color: #007bff; /* Blue button color */
+  color: white; /* White text */
+  border: none;
+  border-radius: 5px; /* Rounded buttons */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+button:active {
+  background-color: #004085; /* Even darker on click */
 }
